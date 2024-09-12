@@ -12,4 +12,4 @@
 4. pip install -r requirements.txt
 5. fastapi dev main.py
 ### Фронтенд (node.js)
-1. node frontend/server.js
+1. cd frontend && node server.js

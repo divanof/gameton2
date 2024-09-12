@@ -2,14 +2,18 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+require('dotenv').config();
+
+const BACKEND_URL = process.env.BACKEND_URL
+
+const hostname = process.env.HOSTNAME;
+const port = process.env.PORT;
 
 const server = http.createServer((req, res) => {
     // Определяем путь к файлу на основе URL запроса
-    let filePath = './frontend' + req.url;
-    if (filePath === './frontend/') {
-        filePath = './frontend/index.html';
+    let filePath = '.' + req.url;
+    if (filePath === './') {
+        filePath = './index.html';
     }
     
     // Определяем расширение файла
@@ -37,7 +41,7 @@ const server = http.createServer((req, res) => {
             contentType = 'audio/wav';
             break;
     }
-    console.log(filePath);
+
     fs.readFile(filePath, function(err, content) {
         if (err) {
             if (err.code === 'ENOENT') {
