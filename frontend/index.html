@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw 2D Array</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('keydown', (event) => {
+            const key = event.key; // Получаем нажатую клавишу
+            const outputDiv = document.getElementById('output');
+            outputDiv.textContent = `Нажата клавиша: ${key}`; // Обновляем текст
+        });
+    </script>
+    <div id="output">Нажмите любую клавишу</div>
+    <button id="sendRequestButton">Отправить GET запрос</button>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.getElementById('sendRequestButton');
+            button.addEventListener('click', () => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'http://127.0.0.1:8000/', true);
+                xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                    }
+                };
+                xhr.send();
+            });
+        });
+
+
+    </script>
+</body>
+</html>
