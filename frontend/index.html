@@ -5,42 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Draw 2D Array</title>
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
         canvas {
-            border: 1px solid black;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        #output {
+            font-size: 20px;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        #output:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
 <body>
-    <canvas id="myCanvas" width="500" height="500"></canvas>
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('keydown', (event) => {
-            const key = event.key; // Получаем нажатую клавишу
-            const outputDiv = document.getElementById('output');
-            outputDiv.textContent = `Нажата клавиша: ${key}`; // Обновляем текст
-        });
-    </script>
+    <canvas id="myCanvas" width="800px" height="800px"></canvas>
     <div id="output">Нажмите любую клавишу</div>
-    <button id="sendRequestButton">Отправить GET запрос</button>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const button = document.getElementById('sendRequestButton');
-            button.addEventListener('click', () => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'http://127.0.0.1:8000/', true);
-                xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-                xhr.setRequestHeader('Content-Type', 'application/json');
-
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        console.log(xhr.responseText);
-                    }
-                };
-                xhr.send();
-            });
-        });
-
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
