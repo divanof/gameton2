@@ -1,5 +1,5 @@
 const BACK_URL = "http://127.0.0.1:8000/"
-const canvas = document.getElementById('myCanvas');
+const canvas = document.getElementById('Canvas');
 const ctx = canvas.getContext('2d');
 
 async function readArrayFromFile(filePath) {
@@ -40,7 +40,7 @@ function fetchData(method, url, payload, headers, callback) {
         callback('Request failed', null);
     };
 
-    xhr.send();
+    xhr.send(payload);
 }
 
 
@@ -75,6 +75,24 @@ async function main() {
         const outputDiv = document.getElementById('output');
         outputDiv.textContent = `Нажата клавиша: ${key}`;
     });
+
+    canvas.addEventListener('click', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        var x = event.x - rect.left;
+        var y = event.y;
+        x = Math.floor(x / 50);
+        y = Math.floor(y / 50);
+        console.log(`Клик по клетке: (${x}, ${y})`);
+        fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': x, 'y': y, 'action': 'move'}), null, 
+            function(error, data) {
+                if (error) {
+                    console.error(error);
+                } else {
+                    alert(data);
+                }
+            }
+        )
+    })
 
     try {
         getMap(function(data) {
