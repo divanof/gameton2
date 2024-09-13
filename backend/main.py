@@ -1,9 +1,16 @@
-from fastapi import FastAPI
+import os
+from dotenv import load_dotenv
+
+from fastapi import BackgroundTasks, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 from pydantic import BaseModel
 
+load_dotenv()
 app = FastAPI()
+
+PORT =  os.environ.get("PORT")
 
 class ActionInfo(BaseModel):
     x: int
@@ -24,7 +31,8 @@ app.add_middleware(
 
 @app.get("/")
 async def main():
-    return {"message": "Hello World!"}
+    print(os.environ)
+    return {"message": PORT}
 
 @app.get("/map/")
 async def get_map():
@@ -96,3 +104,7 @@ async def handle_space_key_action():
     Получение события с управляющей панели при нажатии клавиши пробела
     """
     return {"key": " "}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
