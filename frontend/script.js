@@ -69,11 +69,30 @@ function getColor(type) {
     }
 }
 
-async function main() {
+function processKeyboard(event) {
+    var key = event.key.toLowerCase();
+    
+    if (!(key === 'w' || key === 'a' || key === 's' || key === 'd' || key === ' ')) {
+        console.log(key);
+        return;
+    }
+    if (key === ' ')
+        key = 'space';
+
+    fetchData('POST', BACK_URL + key +'_key_action/', null, null, 
+        function(error, data) {
+            if (error) {
+                console.error(error);
+            } else {
+                alert(data);
+            }
+        }
+    )
+}
+
+function setEvents() {
     document.addEventListener('keydown', (event) => {
-        const key = event.key;
-        const outputDiv = document.getElementById('output');
-        outputDiv.textContent = `Нажата клавиша: ${key}`;
+        processKeyboard(event);
     });
 
     canvas.addEventListener('click', (event) => {
@@ -93,6 +112,10 @@ async function main() {
             }
         )
     })
+}
+
+async function main() {
+    setEvents();
 
     try {
         getMap(function(data) {

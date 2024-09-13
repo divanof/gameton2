@@ -54,10 +54,45 @@ async def get_map():
 @app.post("/action/")
 async def handle_action(action: ActionInfo):
     """
-    Отправка события на сервер
+    Получение события с управляющей панели
     """
     x = action.x
     y = action.y
     action_type = action.action
 
     return {"x": x, "y": y, "action": action_type}
+
+@app.post("/w_key_action/")
+async def handle_w_key_action():
+    """
+    Получение события с управляющей панели при нажатии клавиши W
+    """
+    return {"key": "W"}
+
+@app.post("/s_key_action/")
+async def handle_s_key_action():
+    """
+    Получение события с управляющей панели при нажатии клавиши S
+    """
+    return {"key": "S"}
+
+@app.post("/a_key_action/")
+async def handle_a_key_action():
+    """
+    Получение события с управляющей панели при нажатии клавиши A
+    """
+    return {"key": "A"}
+
+@app.post("/d_key_action/")
+async def handle_d_key_action():
+    """
+    Получение события с управляющей панели при нажатии клавиши D
+    """
+    return {"key": "D"}
+
+@app.post("/space_key_action/")
+async def handle_space_key_action():
+    """
+    Получение события с управляющей панели при нажатии клавиши пробела
+    """
+    return {"key": " "}
