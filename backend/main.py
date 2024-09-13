@@ -11,25 +11,28 @@ class Item(BaseModel):
     price: float
     tax: float | None = None
 
-# Укажите разрешенные источники
 origins = [
     "*"
-    # Добавьте другие источники по необходимости
 ]
 
-# Добавляем CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Разрешенные источники
-    allow_credentials=True,  # Разрешить использование учетных данных
-    allow_methods=["*"],  # Разрешить все методы
-    allow_headers=["*"],  # Разрешить все заголовки
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")
 async def main():
     return {"message": "Hello World!"}
 
-@app.post("/items/")
-async def create_item(item: Item):
-    return item
+@app.get("/map/")
+async def get_map():
+    array = [
+            [1, 2, 3, 3, 2],
+            [2, 2, 2, 1, 3],
+            [2, 1, 2, 1, 3],
+            [1, 2, 3, 1, 3]
+        ];
+    return {"map": array}
