@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from time import sleep
+import json
 
 from fastapi import BackgroundTasks, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +25,12 @@ class ActionInfo(BaseModel):
 
 
 origins = ["*"]
+
+
+def json_read(filename: str):
+    with open(filename) as f_in:
+        return json.load(f_in)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,25 +58,10 @@ async def get_map():
     """
     Получение карты для отрисовки
     """
-    array = [
-        [1, 2, 3, 3, 2, 1, 2, 3, 3, 2, 1, 2, 3, 2, 1, 3],
-        [2, 2, 2, 1, 3, 2, 2, 2, 1, 3, 3, 2, 2, 2, 1, 3],
-        [2, 1, 2, 1, 3, 2, 1, 2, 1, 3, 3, 2, 1, 2, 1, 3],
-        [1, 2, 3, 3, 2, 1, 2, 3, 3, 2, 1, 2, 3, 2, 1, 3],
-        [2, 2, 2, 1, 3, 2, 2, 2, 1, 3, 3, 2, 2, 2, 1, 3],
-        [2, 1, 2, 1, 3, 2, 1, 2, 1, 3, 3, 2, 1, 2, 1, 3],
-        [1, 2, 3, 1, 3, 1, 2, 3, 1, 3, 3, 1, 2, 3, 1, 3],
-        [1, 2, 3, 3, 2, 1, 2, 3, 3, 2, 1, 2, 3, 2, 1, 3],
-        [2, 2, 2, 1, 3, 2, 2, 2, 1, 3, 3, 2, 2, 2, 1, 3],
-        [2, 1, 2, 1, 3, 2, 1, 2, 1, 3, 3, 2, 1, 2, 1, 3],
-        [1, 2, 3, 1, 3, 1, 2, 3, 1, 3, 3, 1, 2, 3, 1, 3],
-        [1, 2, 3, 3, 2, 1, 2, 3, 3, 2, 1, 2, 3, 2, 1, 3],
-        [2, 2, 2, 1, 3, 2, 2, 2, 1, 3, 3, 2, 2, 2, 1, 3],
-        [2, 1, 2, 1, 3, 2, 1, 2, 1, 3, 3, 2, 1, 2, 1, 3],
-        [1, 2, 3, 1, 3, 1, 2, 3, 1, 3, 3, 1, 2, 3, 1, 3],
-        [1, 2, 3, 1, 3, 1, 2, 3, 1, 3, 3, 1, 2, 3, 1, 3],
-    ]
-    return {"map": array}
+    units = json_read("logs/units.json")
+    world = json_read("logs/world.json")
+
+    return {"units": units, "world": world}
 
 
 @app.post("/action/")

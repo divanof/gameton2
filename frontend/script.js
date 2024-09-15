@@ -1,22 +1,17 @@
 const BACK_URL = "http://127.0.0.1:8000/"
 const canvas = document.getElementById('Canvas');
 const ctx = canvas.getContext('2d');
+let globalMap = null;
 
-async function readArrayFromFile(filePath) {
-    const response = await fetch(filePath);
-    const text = await response.text();
-    return text.trim().split('\n').map(row => row.split(',').map(Number));
-}
 
 function drawArray(array) {
+    console.log('bbb', array);
     const squareSize = 50;
-    for (let i = 0; i < array.length; i++) {
-        for (let j = 0; j < array[i].length; j++) {
-            const color = getColor(array[i][j]);
-            ctx.fillStyle = color;
-            ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
-        }
-    }
+    array.forEach(cell => {
+        ctx.fillStyle = getColor(cell["type"]);
+        console.log(cell["x_draw"], cell["y_draw"])
+        ctx.fillRect(cell["x_draw"] * squareSize, cell["y_draw"] * squareSize, squareSize, squareSize);
+    })
 }
 
 
@@ -44,13 +39,73 @@ function fetchData(method, url, payload, headers, callback) {
 }
 
 
+function transformData2Map(data) {
+    let units = data["units"];
+    let world = data["world"];
+    
+    units_keys = ["base", "enemyBlocks", "zombies"];
+
+    let coords = Array();
+    world["zpots"].forEach(element => {
+        coords.push({"x": element["x"], "y": element["y"]});
+    });
+    units_keys.forEach(key => {
+        units[key].forEach(element => {
+            coords.push({"x": element["x"], "y": element["y"]});
+        })
+    });
+    
+    let min_x = Math.min(...coords.map(coord => coord.x));
+    let min_y = Math.min(...coords.map(coord => coord.y));
+    let returnArray = Array();
+
+    world["zpots"].forEach(element => {
+        element["x_draw"] = element["x"] - min_x;
+        element["y_draw"] = element["y"] - min_y;
+        element["type"] = 1
+        returnArray.push(element);
+        
+    });
+    units_keys.forEach(key => {
+        units[key].forEach(element => {
+            element["x_draw"] = element["x"] - min_x;
+            element["y_draw"] = element["y"] - min_y;
+            console.log(element["x_draw"], element["y_draw"]);
+            let value = 0;
+            switch (key) {
+                case "base":
+                    value = 2;
+                    break;
+                case "enemyBlocks":
+                    value = 3;
+                    break;
+                case "zombies":
+                    value = 4;
+                    break;
+            }
+            element["type"] = value;
+            returnArray.push(element);
+        })
+    });
+    globalMap = returnArray;
+
+    return returnArray;
+}
+
+
 async function getMap(callback) {
-    fetchData('GET', BACK_URL + 'map', null, null, function(error, data) {
+    fetchData('GET', BACK_URL + 'map', null, null, (error, data) => {
         if (error) {
             console.error(error);
         } else {
             data = JSON.parse(data);
-            callback(data);
+            console.log(data);
+
+            const map_data = transformData2Map(data);
+
+            console.log('aaa', map_data);
+
+            callback(map_data);
         }
     });
 }
@@ -59,11 +114,13 @@ async function getMap(callback) {
 function getColor(type) {
     switch (type) {
         case 1:
-            return 'red'; 
+            return 'gray'; 
         case 2:
-            return 'green'; 
-        case 3:
             return 'blue'; 
+        case 3:
+            return 'red'; 
+        case 4:
+            return 'green'
         default:
             return 'white'; 
     }
@@ -102,6 +159,10 @@ function setEvents() {
         x = Math.floor(x / 50);
         y = Math.floor(y / 50);
         console.log(`Клик по клетке: (${x}, ${y})`);
+        const target = globalMap.find(cell => cell.x_draw === x && cell.y_draw === y);
+        if (!target) return;
+        console.log('Найдено:', target);
+
         fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': x, 'y': y, 'action': 'move'}), null, 
             (error, data) => {
                 if (error) {
@@ -119,7 +180,7 @@ async function main() {
 
     getMap((data) => {
         console.log(data);
-        drawArray(data['map']);
+        drawArray(data);
     });
 }
 
