@@ -72,7 +72,7 @@ function getColor(type) {
 function processKeyboard(event) {
     var key = event.key.toLowerCase();
     
-    if (!(key === 'w' || key === 'a' || key === 's' || key === 'd' || key === ' ')) {
+    if (!['w', 'a', 's', 'd',  ' '].includes(key)) {
         console.log(key);
         return;
     }
@@ -80,7 +80,7 @@ function processKeyboard(event) {
         key = 'space';
 
     fetchData('POST', BACK_URL + key +'_key_action/', null, null, 
-        function(error, data) {
+        (error, data)=>{
             if (error) {
                 console.error(error);
             } else {
@@ -103,7 +103,7 @@ function setEvents() {
         y = Math.floor(y / 50);
         console.log(`Клик по клетке: (${x}, ${y})`);
         fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': x, 'y': y, 'action': 'move'}), null, 
-            function(error, data) {
+            (error, data) => {
                 if (error) {
                     console.error(error);
                 } else {
@@ -117,14 +117,10 @@ function setEvents() {
 async function main() {
     setEvents();
 
-    try {
-        getMap(function(data) {
-            console.log(data);
-            drawArray(data['map']);
-        });
-    } catch (error) {
-        console.error('Error reading file:', error);
-    }
+    getMap((data) => {
+        console.log(data);
+        drawArray(data['map']);
+    });
 }
 
 main();
