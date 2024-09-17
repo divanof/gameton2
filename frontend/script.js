@@ -3,6 +3,8 @@ const canvas = document.getElementById('Canvas');
 const ctx = canvas.getContext('2d');
 const squareSize = 20;
 let globalMap = null;
+let min_x = 0;
+let min_y = 0;
 
 
 function drawArray(array) {
@@ -56,8 +58,8 @@ function transformData2Map(data) {
         })
     });
     
-    let min_x = Math.min(...coords.map(coord => coord.x));
-    let min_y = Math.min(...coords.map(coord => coord.y));
+    min_x = Math.min(...coords.map(coord => coord.x));
+    min_y = Math.min(...coords.map(coord => coord.y));
     let returnArray = Array();
     console.log(min_x, min_y, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 
@@ -103,8 +105,6 @@ async function getMap(callback) {
             console.log(data);
 
             const map_data = transformData2Map(data);
-
-            console.log('aaa', map_data);
 
             callback(map_data);
         }
@@ -161,10 +161,10 @@ function setEvents() {
         y = Math.floor(y / squareSize);
         console.log(`Клик по клетке: (${x}, ${y})`);
         const target = globalMap.find(cell => cell.x_draw === x && cell.y_draw === y);
-        if (!target) return;
-        console.log('Найдено:', target);
+        if (target)
+            console.log('Найдено:', target);
 
-        fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': target["x"], 'y': target["y"], 'action': 'move'}), null, 
+        fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': x + min_x, 'y': y + min_y, 'action': 'move'}), null, 
             (error, data) => {
                 if (error) {
                     console.error(error);
