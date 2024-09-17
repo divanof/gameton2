@@ -1,12 +1,13 @@
 const BACK_URL = "http://127.0.0.1:8000/"
 const canvas = document.getElementById('Canvas');
 const ctx = canvas.getContext('2d');
+const squareSize = 20;
 let globalMap = null;
 
 
 function drawArray(array) {
     console.log('bbb', array);
-    const squareSize = 50;
+    
     array.forEach(cell => {
         ctx.fillStyle = getColor(cell["type"]);
         console.log(cell["x_draw"], cell["y_draw"])
@@ -58,13 +59,13 @@ function transformData2Map(data) {
     let min_x = Math.min(...coords.map(coord => coord.x));
     let min_y = Math.min(...coords.map(coord => coord.y));
     let returnArray = Array();
+    console.log(min_x, min_y, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 
     world["zpots"].forEach(element => {
         element["x_draw"] = element["x"] - min_x;
         element["y_draw"] = element["y"] - min_y;
         element["type"] = 1
         returnArray.push(element);
-        
     });
     units_keys.forEach(key => {
         units[key].forEach(element => {
@@ -156,14 +157,14 @@ function setEvents() {
         const rect = canvas.getBoundingClientRect();
         var x = event.x - rect.left;
         var y = event.y;
-        x = Math.floor(x / 50);
-        y = Math.floor(y / 50);
+        x = Math.floor(x / squareSize);
+        y = Math.floor(y / squareSize);
         console.log(`Клик по клетке: (${x}, ${y})`);
         const target = globalMap.find(cell => cell.x_draw === x && cell.y_draw === y);
         if (!target) return;
         console.log('Найдено:', target);
 
-        fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': x, 'y': y, 'action': 'move'}), null, 
+        fetchData('POST', BACK_URL + 'action/', JSON.stringify({'x': target["x"], 'y': target["y"], 'action': 'move'}), null, 
             (error, data) => {
                 if (error) {
                     console.error(error);
