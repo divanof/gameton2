@@ -114,7 +114,3 @@ async def handle_space_key_action():
     Получение события с управляющей панели при нажатии клавиши пробела
     """
     return {"key": " "}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host=HOST, port=PORT)
