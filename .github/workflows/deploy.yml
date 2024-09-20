@@ -1,0 +1,25 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Pull latest code on Backend
+        run: |
+          cd /home/gameton2/backend && sudo docker-compose up --build -d
+
+      - name: Pull latest code on Frontend
+        run: |
+          cd /home/gameton2/frontend && sudo docker-compose up --build -d
