@@ -14,7 +14,6 @@ def get_priorities(head, zombies, enemy_blocks):
     if zombies is None:
         return []
     enemy_blocks = enemy_blocks if enemy_blocks is not None else []
-    result = enemy_blocks + zombies
     # shuffle result
     # random.shuffle(result)
     # return result
