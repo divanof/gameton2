@@ -1,42 +1,33 @@
-name: CI
+name: Deploy to Server
 
 on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Run a one-line script
-        run: echo "Hello, world!"
 
-# name: Deploy Application
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
-# on:
-#   push:
-#     branches:
-#       - master
-#   pull_request:
-#     branches:
-#       - master
-
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Pull latest code on Backend
-#         run: |
-#           cd /home/gameton2/backend && sudo docker-compose up --build -d
-
-#       - name: Pull latest code on Frontend
-#         run: |
-#           cd /home/gameton2/frontend && sudo docker-compose up --build -d
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no divanof@147.45.254.21 <<EOF
+            cd /home/gameton2
+            git pull origin master
+            cd backend
+            ${{ secrets.SUDO_PASS }} | sudo --stdin docker-compose up --build -d
+            cd ../frontend
+            ${{ secrets.SUDO_PASS }} | sudo --stdin docker-compose up --build -d
+          EOF
