@@ -1,25 +1,42 @@
-name: Deploy Application
+name: CI
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: Run a one-line script
+        run: echo "Hello, world!"
 
-      - name: Pull latest code on Backend
-        run: |
-          cd /home/gameton2/backend && sudo docker-compose up --build -d
+# name: Deploy Application
 
-      - name: Pull latest code on Frontend
-        run: |
-          cd /home/gameton2/frontend && sudo docker-compose up --build -d
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Pull latest code on Backend
+#         run: |
+#           cd /home/gameton2/backend && sudo docker-compose up --build -d
+
+#       - name: Pull latest code on Frontend
+#         run: |
+#           cd /home/gameton2/frontend && sudo docker-compose up --build -d
