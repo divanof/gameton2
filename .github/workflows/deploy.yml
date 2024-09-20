@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no divanof@147.45.254.21 <<EOF
+          ssh -o -t StrictHostKeyChecking=no divanof@147.45.254.21 <<EOF
             cd /home/gameton2
             git pull origin master
             cd backend
