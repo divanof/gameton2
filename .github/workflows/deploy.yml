@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -tt divanof@147.45.254.214 << EOF
+          ssh -tt -i <"${{ secrets.SSH_KEY }}" divanof@147.45.254.214 << EOF
             cd /home/gameton2
             git pull origin master
             
