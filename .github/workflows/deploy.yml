@@ -23,11 +23,13 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o -t StrictHostKeyChecking=no divanof@147.45.254.214 <<EOF
+          ssh divanof@147.45.254.214 << EOF
             cd /home/gameton2
             git pull origin master
-            cd backend
-            ${{ secrets.SUDO_PASS }} | sudo --stdin docker-compose up --build -d
-            cd ../frontend
-            ${{ secrets.SUDO_PASS }} | sudo --stdin docker-compose up --build -d
+            
+            # Запуск docker-compose для backend
+            echo "${{ secrets.SUDO_PASS }}" | sudo -S docker-compose up --build -d backend
+            
+            # Запуск docker-compose для frontend
+            echo "${{ secrets.SUDO_PASS }}" | sudo -S docker-compose up --build -d frontend
           EOF
