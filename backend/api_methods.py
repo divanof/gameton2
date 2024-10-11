@@ -64,6 +64,80 @@ def get_rounds(is_test=True):
     return _request('GET', '/rounds/magcarp', is_test=is_test)
 
 
+def _print_move_info(move_data):
+    """
+    Функция для красивого вывода информации о перемещении ковров-самолетов.
+    Ожидает JSON-ответ от API /move.
+    """
+    if not move_data:
+        print("Нет данных для отображения.")
+        return
+
+    # Размер карты
+    map_size = move_data.get('mapSize', {})
+    map_size_str = (
+        f"{map_size.get('x', 'Неизвестно')} x "
+        f"{map_size.get('y', 'Неизвестно')}"
+    )
+    print(f"Размер карты: {map_size_str}")
+
+    # Cooldown для атаки
+    attack_cooldown = move_data.get('attackCooldownMs', 'Неизвестно')
+    print(f"Время до следующей атаки: {attack_cooldown} мс")
+
+    # Текущие ковры-самолеты (transports)
+    transports = move_data.get('transports', [])
+    if transports:
+        print("\nКовры-самолеты:")
+        for idx, transport in enumerate(transports, 1):
+            print(f"  Ковер {idx}:")
+            print(f"    ID: {transport.get('id')}")
+            print(
+                f"    Координаты: X = {transport.get('x', 'Неизвестно')},",
+                f"Y = {transport.get('y', 'Неизвестно')}")
+            print(
+                f"    Скорость: {transport.get('velocity', {}).get('x', 0)},",
+                f"{transport.get('velocity', {}).get('y', 0)}")
+            print(f"    Здоровье: {transport.get('health', 'Неизвестно')}")
+            print(f"    Счетчик смертей: {transport.get('deathCount', 0)}")
+            print(f"    Статус: {transport.get('status', 'Неизвестно')}")
+
+    # Информация об аномалиях
+    anomalies = move_data.get('anomalies', [])
+    if anomalies:
+        print("\nАномалии на карте:")
+        for idx, anomaly in enumerate(anomalies, 1):
+            print(f"  Аномалия {idx}:")
+            print(f"    ID: {anomaly.get('id')}")
+            print(
+                f"    Координаты: X = {anomaly.get('x', 'Неизвестно')},",
+                f"Y = {anomaly.get('y', 'Неизвестно')}")
+            print(f"    Радиус: {anomaly.get('radius', 'Неизвестно')}")
+            print(f"    Сила: {anomaly.get('strength', 'Неизвестно')}")
+            print(
+                "    Скорость аномалии: X =",
+                f"{anomaly.get('velocity', {}).get('x', 0)},",
+                f"Y = {anomaly.get('velocity', {}).get('y', 0)}")
+
+    # Информация о наградах (bounties)
+    bounties = move_data.get('bounties', [])
+    if bounties:
+        print("\nНаграды за ковры:")
+        for idx, bounty in enumerate(bounties, 1):
+            print(f"  Награда {idx}:")
+            print(f"    Координаты: X = {bounty.get('x', 'Неизвестно')},",
+                  f"Y = {bounty.get('y', 'Неизвестно')}")
+            print(f"    Очки: {bounty.get('points', 'Неизвестно')}")
+            print(f"    Радиус: {bounty.get('radius', 'Неизвестно')}")
+
+    # Обработка ошибок
+    errors = move_data.get('errors', [])
+    if errors:
+        print("\nОшибки:")
+        for error in errors:
+            print(f"  {error}")
+
+
 def _print_rounds_info(is_test=True):
     """Функция для красивого вывода информации о раундах"""
     rounds_data = get_rounds(is_test=is_test)
