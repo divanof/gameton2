@@ -143,22 +143,8 @@ def calculate_acc_vector(transport, anomalies, bounties, max_acc):
     # Step 2: Compute the desired acceleration towards the bounty
     delta_pos = (nearest_bounty.x - transport.x, nearest_bounty.y - transport.y)
     a_bounty = delta_pos  # Proportional to the distance vector
-    
 
-    a_anomalies = (0, 0)
-    for anomaly in anomalies:
-        d = distance(transport.x, transport.y, anomaly.x, anomaly.y)
-        if d <= anomaly.radius:
-            # Compute unit vector from transport to anomaly
-            direction = (anomaly.x - transport.x, anomaly.y - transport.y)
-            u = normalize(direction)
-            # Acceleration due to anomaly
-            a_anomaly = (anomaly.strength * u[0], anomaly.strength * u[1])
-            # Sum up the anomaly accelerations
-            a_anomalies = (a_anomalies[0] + a_anomaly[0], a_anomalies[1] + a_anomaly[1])
-    
-    
-    a_total = (a_bounty[0] + a_anomalies[0], a_bounty[1] + a_anomalies[1])
+    a_total = (a_bounty[0], a_bounty[1])
     
     # Step 5: Limit the total acceleration to max_acc
     a_total_limited = limit(a_total, max_acc)
