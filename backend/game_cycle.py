@@ -9,7 +9,7 @@ from random import randint
 from api_methods import move, SLEEP_TIME
 from extractors import parse_game_data
 from models import TransportCommand
-from move_logic import calculate_acc_vector, уебать
+from move_logic import calculate_acc_vector, уебать, calculate_distance, get_nearest_treasure 
 
 
 def json_read(filename: str):
@@ -35,11 +35,19 @@ def _sleep_time_till_next_hour():
         time.sleep(sleep_seconds)
 
 
-def _game_step(anomalies, transports, enemies, wantedList, bounties, consts):
+# def _game_step(anomalies, transports, enemies, wantedList, bounties, consts):
+def _game_step(anomalies, transports, enemies, wantedList, bounties, consts, target):
     дывын = []
+
+    i = 0
     for trans in transports:
+        if calculate_distance(trans.x, trans.y, target[i][0], target[i][1]) < 5:
+            target[i][0],target[i][1] = get_nearest_treasure(trans, bounties)
+
         acceleration = calculate_acc_vector(trans, 2256, 2256, consts)
         attack = уебать(trans, enemies)
+
+        i += 1
 
         carpet = TransportCommand(
             transport_id=trans.id,
@@ -56,6 +64,7 @@ def main_cycle():
     result_transports = []
     is_test = True
 
+    target = False
     while True:
         _sleep_time_till_next_hour()
 
@@ -76,7 +85,16 @@ def main_cycle():
         bounties = game_data['bounties']
         consts = game_data['consts']
 
-        result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts)
+        if not target:
+            target = [
+                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
+                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
+                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
+                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
+                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)]
+            ]
+
+        result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts, target)
 
         end_time = time.time()
         elapsed_time = end_time - start_time

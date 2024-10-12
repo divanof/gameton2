@@ -45,3 +45,23 @@ def уебать(trans, enemies):
         'x': target_enemy.x,
         'y': target_enemy.y
     } if target_enemy else None
+
+
+def get_nearest_treasure(trans, bounties):
+    """Поиск ближайшей монетки к ковру"""
+    x = trans.x
+    y = trans.y
+    min_dist = float('inf')
+    min_boun = []
+    for boun in bounties:
+        if calculate_distance(x,y,boun.x,boun.y) < min_dist:
+            min_dist = calculate_distance(x,y,boun.x,boun.y)
+            min_boun = [boun.x,boun.y]
+
+    return min_boun[0], min_boun[1]
+
+
+
+def calculate_distance(x1, y1, x2, y2):
+    """Расчет евклидова расстояния между двумя точками"""
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
