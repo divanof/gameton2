@@ -9,6 +9,7 @@ from random import randint
 from api_methods import move, SLEEP_TIME
 from extractors import parse_game_data
 from models import TransportCommand
+from move_logic import calculate_acc_vector
 
 
 def json_read(filename: str):
@@ -37,13 +38,12 @@ def _sleep_time_till_next_hour():
 def _game_step(anomalies, transports, enemies, wantedList, bounties, consts):
     дывын = []
     for trans in transports:
-        carpet = TransportCommand(transport_id=trans.id)
+        acceleration = calculate_acc_vector(trans, 2256, 2256, consts)
 
-        хуй = int(math.sqrt(consts.max_accel))
-        carpet.acceleration = {
-            'x': randint(-хуй, хуй),
-            'y': randint(-хуй, хуй),
-        }
+        carpet = TransportCommand(
+            transport_id=trans.id,
+            acceleration=acceleration,
+        )
 
         дывын.append(carpet.to_json())
 
