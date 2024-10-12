@@ -163,7 +163,7 @@ def calculate_acc_vector(transport, anomalies, bounties, max_acc):
     # Step 5: Limit the total acceleration to max_acc
     a_total_limited = limit(a_total, max_acc)
     
-    return {'x': a_total_limited.x, 'y': a_total_limited.y}
+    return {'x': a_total_limited[0], 'y': a_total_limited[1]}
 
 
 def уебать(trans, enemies):
