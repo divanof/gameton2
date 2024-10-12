@@ -107,7 +107,7 @@ from utils import sign
 #     return {"x": dx * scale, "y": dy * scale}
 
 
-def calculate_acc_vector(transport, anomalies, bounties, max_acc):
+def calculate_acc_vector(transport, target, max_acc):
     # Helper function to compute Euclidean distance
     def distance(x1, y1, x2, y2):
         return math.hypot(x2 - x1, y2 - y1)
@@ -128,20 +128,20 @@ def calculate_acc_vector(transport, anomalies, bounties, max_acc):
         return vec
     
 
-    min_distance = float('inf')
-    nearest_bounty = None
-    for bounty in bounties:
-        d = distance(transport.x, transport.y, bounty.x, bounty.y)
-        if d < min_distance:
-            min_distance = d
-            nearest_bounty = bounty
+    # min_distance = float('inf')
+    # nearest_bounty = None
+    # for bounty in bounties:
+    #     d = distance(transport.x, transport.y, bounty.x, bounty.y)
+    #     if d < min_distance:
+    #         min_distance = d
+    #         nearest_bounty = bounty
     
-    if nearest_bounty is None:
-        # No bounties available
-        return (0, 0)
+    # if nearest_bounty is None:
+    #     # No bounties available
+    #     return (0, 0)
     
     # Step 2: Compute the desired acceleration towards the bounty
-    delta_pos = (nearest_bounty.x - transport.x, nearest_bounty.y - transport.y)
+    delta_pos = (target['x'] - transport.x, targer['y'] - transport.y)
     a_bounty = delta_pos  # Proportional to the distance vector
 
     a_total = (a_bounty[0], a_bounty[1])
