@@ -3,13 +3,6 @@ const squareSize = 20;
 const canvas = document.getElementById('mapCanvas');
 const ctx = canvas.getContext('2d');
 
-const originalMapSize = { x: 15000, y: 15000 };
-const scaledWidth = canvas.width;
-const scaledHeight = canvas.height;
-
-const scaleX = scaledWidth / originalMapSize.x;
-const scaleY = scaledHeight / originalMapSize.y;
-
 
 function fetchData(method, url, payload, headers, callback) {
     const xhr = new XMLHttpRequest();
@@ -102,7 +95,7 @@ function setEvents() {
     // })
 }
 
-function drawAnomalies(data) {
+function drawAnomalies(data, scaleX, scaleY, originalMapSize) {
     ctx.lineWidth = 5; // Толщина границы
     data.anomalies.forEach(anomaly => {
         if (anomaly.x >= -1000 && anomaly.x <= originalMapSize.x && anomaly.y >= -1000 && anomaly.y <= originalMapSize.y) {
@@ -128,7 +121,7 @@ function drawAnomalies(data) {
     });
 }
 
-function drawTransports(data) {
+function drawTransports(data, scaleX, scaleY, originalMapSize) {
     ctx.fillStyle = 'green';
     data.transports.forEach(transport => {
         if (transport.x >= -1000 && transport.x <= originalMapSize.x && transport.y >= -1000 && transport.y <= originalMapSize.y) {
@@ -137,7 +130,7 @@ function drawTransports(data) {
     });
 }
 
-function drawEnemies(data) {
+function drawEnemies(data, scaleX, scaleY, originalMapSize) {
     ctx.fillStyle = 'red';
     data.enemies.forEach(enemy => {
         if (enemy.x >= -1000 && enemy.x <= originalMapSize.x && enemy.y >= -1000 && enemy.y <= originalMapSize.y) {
@@ -146,7 +139,7 @@ function drawEnemies(data) {
     });
 }
 
-function drawAnomalyLabels(data) {
+function drawAnomalyLabels(data, scaleX, scaleY, originalMapSize) {
     ctx.fillStyle = 'black'; // Цвет текста
     ctx.font = '12px Arial'; // Шрифт и размер текста
     data.anomalies.forEach(anomaly => {
@@ -157,7 +150,7 @@ function drawAnomalyLabels(data) {
         }
     });
 }
-function drawBounties(data) {
+function drawBounties(data, scaleX, scaleY, originalMapSize) {
     ctx.strokeStyle = 'yellow'; // Цвет контура для bounty
     ctx.lineWidth = 3; // Толщина границы для bounty
     data.bounties.forEach(bounty => {
@@ -175,12 +168,22 @@ function clearCanvas() {
 
 
 function drawMap(data) {
+    if (data == null) {
+        console.error('No data received');
+        return;
+    }
+    const originalMapSize = data.mapSize;
+    const scaledWidth = canvas.width;
+    const scaledHeight = canvas.height;
+
+    const scaleX = scaledWidth / originalMapSize.x;
+    const scaleY = scaledHeight / originalMapSize.y;
     clearCanvas();
-    drawAnomalies(data);
-    drawTransports(data);
-    drawEnemies(data);
-    drawBounties(data);
-    drawAnomalyLabels(data);
+    drawAnomalies(data, scaleX, scaleY, originalMapSize);
+    drawTransports(data, scaleX, scaleY, originalMapSize);
+    drawEnemies(data, scaleX, scaleY, originalMapSize);
+    drawBounties(data, scaleX, scaleY, originalMapSize);
+    drawAnomalyLabels(data, scaleX, scaleY, originalMapSize);
 }
 
 async function main() {
