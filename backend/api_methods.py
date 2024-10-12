@@ -13,6 +13,7 @@ TEST_URL = os.environ.get('TEST_GAME_SERVER_URL',
                           'https://games-test.datsteam.dev')
 TOKEN = os.environ.get('TOKEN')
 LOG_DIR = os.environ.get('LOG_DIR', 'logs')
+SLEEP_TIME = float(os.environ.get('SLEEP_TIME', 0.32))
 
 assert TOKEN, 'token required'
 os.makedirs(LOG_DIR, exist_ok=True)

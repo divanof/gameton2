@@ -6,7 +6,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from random import randint
 
-from api_methods import move
+from api_methods import move, SLEEP_TIME
 from extractors import parse_game_data
 from models import TransportCommand
 
@@ -60,6 +60,11 @@ def main_cycle():
         start_time = time.time()
 
         game_data_json = move(transports=result_transports, is_test=is_test)
+        if not game_data_json:
+            print("=== ALARM: None in game_data_json ===")
+            time.sleep(1)
+            continue
+
         game_data = parse_game_data(data=game_data_json)
 
         anomalies = game_data['anomalies']
@@ -70,18 +75,19 @@ def main_cycle():
         consts = game_data['consts']
 
         result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts)
-        print(result_transports)
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        remaining_sleep_time = 0.32 - elapsed_time
+        remaining_sleep_time = SLEEP_TIME - elapsed_time
+
+        print(elapsed_time, remaining_sleep_time)
 
         if remaining_sleep_time > 0:
             print(f"Sleep for: {remaining_sleep_time}")
             sleep(remaining_sleep_time)
 
         else:
-            print("Operation took longer than 0.33 seconds, no sleep added")
+            print(f"Operation took longer than {SLEEP_TIME} seconds, no sleep added")
 
 
 if __name__ == '__main__':

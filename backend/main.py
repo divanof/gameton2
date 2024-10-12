@@ -25,6 +25,7 @@ class ActionInfo(BaseModel):
 
 
 origins = ["*"]
+# action = [False]  # GET to / - switch False to True
 
 
 def json_read(filename: str):
@@ -41,16 +42,21 @@ app.add_middleware(
 )
 
 
-async def run_game_cycle():
-    print("main game cycle started")
-    main_cycle()
+# async def run_game_cycle(action):
+#     print("main game cycle started")
+#     main_cycle(action)
 
 
-@app.get("/")
-async def main(background_tasks: BackgroundTasks):
-    print(os.environ)
-    # background_tasks.add_task(run_game_cycle)
-    return {"message": PORT}
+# @app.get("/")
+# async def main(background_tasks: BackgroundTasks):
+#     print(os.environ)
+
+#     action[0] = not action[0]
+#     if action[0]:
+#         background_tasks.add_task(run_game_cycle, action)
+#         return {"message": {"port": PORT, "action": "started"}}
+
+#     return {"message": {"port": PORT, "action": "stopped"}}
 
 
 @app.get("/map/")
