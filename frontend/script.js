@@ -1,4 +1,4 @@
-const BACK_URL = "http://127.0.0.1:8000/"
+const BACK_URL = "http://147.45.254.214:8000/"
 const squareSize = 20;
 const canvas = document.getElementById('mapCanvas');
 const ctx = canvas.getContext('2d');
