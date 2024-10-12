@@ -90,21 +90,92 @@ from utils import sign
 #     return {"x": acc_x, "y": acc_y}
 
 
-def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
-    """
-    Рассчитывает вектор движения от текущей позиции до целевой позиции.
-    Возвращает нормализованный вектор, учитывая максимальное ускорение.
-    """
-    dx = target_x - trans.x
-    dy = target_y - trans.y
+# def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
+#     """
+#     Рассчитывает вектор движения от текущей позиции до целевой позиции.
+#     Возвращает нормализованный вектор, учитывая максимальное ускорение.
+#     """
+#     dx = target_x - trans.x
+#     dy = target_y - trans.y
 
-    distance = math.sqrt(dx**2 + dy**2)
+#     distance = math.sqrt(dx**2 + dy**2)
 
-    if distance == 0:
-        return {"x": 0, "y": 0}
+#     if distance == 0:
+#         return {"x": 0, "y": 0}
 
-    scale = min(consts.max_accel / distance, 1)
-    return {"x": dx * scale, "y": dy * scale}
+#     scale = min(consts.max_accel / distance, 1)
+#     return {"x": dx * scale, "y": dy * scale}
+
+
+def calculate_acc_vector(transport, anomalies, enemies, bounties, max_acc):
+  
+    # Constants for force calculations
+    BOUNTY_ATTRACTION_STRENGTH = 1.0  
+    ENEMY_REPULSION_STRENGTH = 100.0 
+
+    tx, ty = transport.x, transport.y
+
+    # Find the nearest bounty
+    min_dist = float('inf')
+    nearest_bounty = None
+    for bounty in bounties:
+        dist = math.hypot(bounty.x - tx, bounty.y - ty)
+        if dist < min_dist:
+            min_dist = dist
+            nearest_bounty = bounty
+
+    # Compute the attractive force towards the nearest bounty
+    if nearest_bounty:
+        dx = nearest_bounty.x - tx
+        dy = nearest_bounty.y - ty
+        dist = math.hypot(dx, dy)
+        if dist != 0:
+            nx = dx / dist
+            ny = dy / dist
+            # Attraction force towards the bounty
+            force_bounty_x = nx * BOUNTY_ATTRACTION_STRENGTH
+            force_bounty_y = ny * BOUNTY_ATTRACTION_STRENGTH
+        else:
+            force_bounty_x = 0
+            force_bounty_y = 0
+    else:
+        force_bounty_x = 0
+        force_bounty_y = 0
+
+    # Initialize total force with the bounty attraction force
+    total_force_x = force_bounty_x
+    total_force_y = force_bounty_y
+
+    # Compute forces from anomalies
+    for anomaly in anomalies:
+        dx = anomaly.x - tx
+        dy = anomaly.y - ty
+        dist = math.hypot(dx, dy)
+        if dist < anomaly.radius and dist != 0:
+            nx = dx / dist
+            ny = dy / dist
+            force_magnitude = anomaly.strength * (anomaly.radius - dist) / anomaly.radius
+            total_force_x += nx * force_magnitude
+            total_force_y += ny * force_magnitude
+
+    for enemy in enemies:
+        dx = enemy.x - tx
+        dy = enemy.y - ty
+        dist = math.hypot(dx, dy)
+        if dist != 0:
+            nx = dx / dist
+            ny = dy / dist
+            force_magnitude = ENEMY_REPULSION_STRENGTH / dist**2
+            total_force_x -= nx * force_magnitude
+            total_force_y -= ny * force_magnitude
+
+    acc_magnitude = math.hypot(total_force_x, total_force_y)
+    if acc_magnitude > max_acc:
+        scaling_factor = max_acc / acc_magnitude
+        total_force_x *= scaling_factor
+        total_force_y *= scaling_factor
+
+    return {"x": total_force_x, "y": total_force_y}
 
 
 def уебать(trans, enemies):
