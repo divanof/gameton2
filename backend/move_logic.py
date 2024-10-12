@@ -1,21 +1,52 @@
 import math
+from utils import sign
 
 
-def calculate_acc_vector(trans, target_x, target_y, consts):
+def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
     """
     Рассчитывает вектор движения от текущей позиции до целевой позиции.
     Возвращает нормализованный вектор, учитывая максимальное ускорение.
     """
+    px = 0  # power x
+    py = 0  # power y
+    for anom in anomalies:
+        d = math.hypot((anom.x - trans.x), (anom.y - trans.y))
+        if d >= anom.radius:
+            continue
+        
+        a = sign(anom.strength) * anom.strength**2 / d**2
+        px += a * (trans.x - anom.x) / d
+        py += a * (trans.y - anom.y) / d
+    
     dx = target_x - trans.x
     dy = target_y - trans.y
 
-    distance = math.sqrt(dx**2 + dy**2)
+    px += dx
+    py += dy
 
-    if distance == 0:
+    tp = math.hypot(px, py)  # total power
+    if tp == 0:
         return {"x": 0, "y": 0}
 
-    scale = min(consts.max_accel / distance, 1)
-    return {"x": dx * scale, "y": dy * scale}
+    if tp > consts.max_accel:
+        px = px * consts.max_accel / tp
+        py = py * consts.max_accel / tp
+
+    return {"x": px, "y": py}
+
+    # pl = math.hypot(px, py)  # power length
+    # if pl >= consts.max_accel:
+    #     return {"x": px * consts.max_accel / pl, "y": py * consts.max_accel / pl}
+        
+
+
+    # distance = math.sqrt(dx**2 + dy**2)
+
+    # if distance == 0:
+    #     return {"x": 0, "y": 0}
+
+    # scale = min(consts.max_accel / distance, 1)
+    # return {"x": dx * scale, "y": dy * scale}
 
 
 def уебать(trans, enemies):

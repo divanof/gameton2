@@ -1,6 +1,10 @@
 import os
 
 
+def sign(x):
+    return 1 if x > 0 else -1
+
+
 def get_latest_log_file(log_directory='logs'):
     """
     Возвращает путь к самому последнему (по времени изменения) файлу в директории logs.

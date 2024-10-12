@@ -11,7 +11,7 @@ def extract_anomalies(data):
             anomaly.get('id'),
             anomaly.get('x'),
             anomaly.get('y'), 
-            anomaly.get('radius'),
+            anomaly.get('effectiveRadius'),
             anomaly.get('strength'),
             anomaly.get('velocity')
         )

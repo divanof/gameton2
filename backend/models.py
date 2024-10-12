@@ -1,3 +1,6 @@
+from utils import sign
+
+
 class Anomaly:
     def __init__(self, anomaly_id, x, y, radius, strength, velocity):
         self.id = anomaly_id
