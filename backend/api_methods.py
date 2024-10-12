@@ -8,9 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MAIN_URL = os.environ.get('PROD_GAME_SERVER_URL',
-                          'https://games.datsteam.dev/')
+                          'https://games.datsteam.dev')
 TEST_URL = os.environ.get('TEST_GAME_SERVER_URL',
-                          'https://games-test.datsteam.dev/')
+                          'https://games-test.datsteam.dev')
 TOKEN = os.environ.get('TOKEN')
 LOG_DIR = os.environ.get('LOG_DIR', 'logs')
 

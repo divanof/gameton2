@@ -1,4 +1,4 @@
-from models import Anomaly, Transport, Enemy, Bounty, Wanted
+from models import Anomaly, Transport, Enemy, Bounty, Wanted, Constants
 
 
 def extract_anomalies(data):
@@ -83,6 +83,27 @@ def extract_bounties(data):
     ]
 
 
+def extract_constants(data):
+    """
+    Извлекает константы из JSON-ответа и преобразует их в объект класса Constants.
+    """
+    if not data:
+        return None
+    return Constants(
+        max_speed=data.get('maxSpeed'),
+        max_accel=data.get('maxAccel'),
+        attack_range=data.get('attackRange'),
+        attack_cooldown_ms=data.get('attackCooldownMs'),
+        attack_damage=data.get('attackDamage'),
+        attack_explosion_radius=data.get('attackExplosionRadius'),
+        revive_timeout_sec=data.get('reviveTimeoutSec'),
+        shield_time_ms=data.get('shieldTimeMs'),
+        shield_cooldown_ms=data.get('shieldCooldownMs'),
+        transport_radius=data.get('transportRadius'),
+        map_size=data.get('mapSize'),
+    )
+
+
 def parse_game_data(data):
     """
     Центральная функция для разбора JSON-ответа и выделения всех объектов.
@@ -94,4 +115,5 @@ def parse_game_data(data):
         'enemies': extract_enemies(data),
         'wantedList': extract_wanted_list(data),
         'bounties': extract_bounties(data),
+        'consts': extract_constants(data),
     }
