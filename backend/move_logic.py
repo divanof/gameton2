@@ -1,60 +1,18 @@
-from api_methods import *
 import math
-import random
 
 
-def get_move_data(units, mtrx):
-    bx, by = mtrx[0][0]["x"], mtrx[0][0]["y"]
+def calculate_acc_vector(trans, target_x, target_y, consts):
+    """
+    Рассчитывает вектор движения от текущей позиции до целевой позиции.
+    Возвращает нормализованный вектор, учитывая максимальное ускорение.
+    """
+    dx = target_x - trans.x
+    dy = target_y - trans.y
 
-    points = []
-    for line in mtrx:
-        for objcts in line:
-            if (
-                objcts is not None
-                and objcts["type"] is not None
-                and objcts["type"] == "base"
-            ):
-                points.append({"x": objcts["x"], "y": objcts["y"]})
+    distance = math.sqrt(dx**2 + dy**2)
 
-    # Инициализация переменных для хранения максимального расстояния и соответствующих координат
-    max_dist = -math.inf  # Используем минус бесконечность для начала поиска
-    max_coords = []
+    if distance == 0:
+        return {"x": 0, "y": 0}
 
-    for p in points:
-        # current_max_distance = 0  # Переинициализируем максимальное расстояние для каждой точки
-
-        # for zombie in units['zombies']:
-        #     distance = abs(p['x'] - zombie['x']) + abs(p['y'] - zombie['y'])
-
-        #     # Обновляем максимальное расстояние, если текущее расстояние больше
-        #     if distance > current_max_distance:
-        #         current_max_distance = distance
-
-        # # Проверяем, обновлено ли глобальное максимальное расстояние
-        # if current_max_distance > max_dist:
-        #     max_dist = current_max_distance
-        x, y = p["x"], p["y"]
-        # if mtrx[y - by + 1][x - bx + 1]['type'] == 'base' and \
-        #         mtrx[y - by - 1][x - bx - 1]['type'] == 'base' and \
-        #         mtrx[y - by + 1][x - bx - 1]['type'] == 'base' and \
-        #         mtrx[y - by - 1][x - bx + 1]['type'] == 'base':
-
-        if (
-            mtrx[y - by + 1][x - bx]["type"] == "base"
-            and mtrx[y - by - 1][x - bx]["type"] == "base"
-            and mtrx[y - by][x - bx + 1]["type"] == "base"
-            and mtrx[y - by][x - bx - 1]["type"] == "base"
-        ):
-            good = (p["x"], p["y"])
-            max_coords.append(good)
-
-    random.shuffle(max_coords)
-    max_coords = max_coords[0] if len(max_coords) > 0 else None
-    if max_coords is None:
-        return None
-    return (
-        {"x": 1, "y": 1}
-        # {"x": max_coords[0], "y": max_coords[1]} if max_coords else None
-    )  # {'x': points[0]['x'], 'y': points[0]['y']}
-
-    # return {'x': int, 'y': int},{'blockId':basa['id'],'target':{'x': minxzomb, 'y': minyzomb}}
+    scale = min(consts.max_accel / distance, 1)
+    return {"x": dx * scale, "y": dy * scale}
