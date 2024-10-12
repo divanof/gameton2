@@ -1,10 +1,14 @@
 import time
-from time import sleep
+import json
+import math
 
-from attack_logic import *
-from build_logic import *
-from move_logic import *
-from api_methods import *
+from time import sleep
+from datetime import datetime, timedelta
+from random import randint
+
+from api_methods import move, SLEEP_TIME
+from extractors import parse_game_data
+from models import TransportCommand
 
 
 def json_read(filename: str):
@@ -12,46 +16,79 @@ def json_read(filename: str):
         return json.load(f_in)
 
 
+def _sleep_time_till_next_hour():
+    """
+    Функция, которая вычисляет количество секунд до начала следующего часа.
+    Используется для того, чтобы заснуть на время до окончания перерыва.
+    """
+    current_time = datetime.now()
+    current_minute = current_time.minute
+
+    if 55 <= current_minute < 60:
+        now = datetime.now()
+        next_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+        sleep_seconds = (next_hour - now).total_seconds()
+
+        print(f"Перерыв: текущее время {current_time.strftime('%H:%M:%S')}, "
+                f"ждем окончания перерыва (осталось {int(sleep_seconds)} секунд).")
+        time.sleep(sleep_seconds)
+
+
+def _game_step(anomalies, transports, enemies, wantedList, bounties, consts):
+    дывын = []
+    for trans in transports:
+        carpet = TransportCommand(transport_id=trans.id)
+
+        хуй = int(math.sqrt(consts.max_accel))
+        carpet.acceleration = {
+            'x': randint(-хуй, хуй),
+            'y': randint(-хуй, хуй),
+        }
+
+        дывын.append(carpet.to_json())
+
+    return дывын
+
+
 def main_cycle():
-    # units = json_read('logs/2024-07-13 11:05:56.598445_units.json')
-    # world = json_read('logs/2024-07-13 11:05:56.857259_world.json')
-    # build_data = get_build_data(units, world)
+    result_transports = []
+    is_test = True
+
     while True:
+        _sleep_time_till_next_hour()
+
         start_time = time.time()
 
-        units = get_units()
-        world = get_world()
+        game_data_json = move(transports=result_transports, is_test=is_test)
+        if not game_data_json:
+            print("=== ALARM: None in game_data_json ===")
+            time.sleep(1)
+            continue
 
-        # units = json_read('logs/2024-07-13 15_28_54.940730_units.json')
-        # world = json_read('logs/2024-07-13 15_28_55.213243_world.json')
-        mtrx = []
-        payload = {}
+        game_data = parse_game_data(data=game_data_json)
 
-        attack_data = get_attack_data(units)
-        # build_data = get_build_data(units, world)
+        anomalies = game_data['anomalies']
+        transports = game_data['transports']
+        enemies = game_data['enemies']
+        wantedList = game_data['wantedList']
+        bounties = game_data['bounties']
+        consts = game_data['consts']
 
-        move_data = None
-        move_data = get_move_data(units, mtrx)
-        build_data = get_build_data(units, world, mtrx)
-        # move_data = get_move_data(units, world)
-
-        if attack_data:
-            payload["attack"] = attack_data
-        if build_data:
-            payload["build"] = build_data
-        if move_data:
-            payload["moveBase"] = move_data
-
-        print(payload)
-
-        play(payload)
+        result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts)
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        remaining_sleep_time = 1.98 - elapsed_time
+        remaining_sleep_time = SLEEP_TIME - elapsed_time
+
+        print(elapsed_time, remaining_sleep_time)
+
         if remaining_sleep_time > 0:
             print(f"Sleep for: {remaining_sleep_time}")
             sleep(remaining_sleep_time)
 
         else:
-            print("Operation took longer than 2 seconds, no sleep added")
+            print(f"Operation took longer than {SLEEP_TIME} seconds, no sleep added")
+
+
+if __name__ == '__main__':
+    main_cycle()
