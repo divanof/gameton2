@@ -141,7 +141,7 @@ def calculate_acc_vector(transport, target, max_acc):
     #     return (0, 0)
     
     # Step 2: Compute the desired acceleration towards the bounty
-    delta_pos = (target['x'] - transport.x, targer['y'] - transport.y)
+    delta_pos = (target['x'] - transport.x, target['y'] - transport.y)
     a_bounty = delta_pos  # Proportional to the distance vector
 
     a_total = (a_bounty[0], a_bounty[1])
