@@ -44,7 +44,7 @@ def _game_step(anomalies, transports, enemies, wantedList, bounties, consts, tar
         if calculate_distance(trans.x, trans.y, target[i][0], target[i][1]) < 5:
             target[i][0],target[i][1] = get_nearest_treasure(trans, bounties)
 
-        acceleration = calculate_acc_vector(trans, 2256, 2256, consts)
+        acceleration = calculate_acc_vector(trans, target[i][0], target[i][1], consts)
         attack = уебать(trans, enemies)
 
         i += 1
