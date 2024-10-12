@@ -1,11 +1,14 @@
 import time
 import json
+import math
 
 from time import sleep
 from datetime import datetime, timedelta
+from random import randint
 
 from api_methods import move
 from extractors import parse_game_data
+from models import TransportCommand
 
 
 def json_read(filename: str):
@@ -31,6 +34,22 @@ def _sleep_time_till_next_hour():
         time.sleep(sleep_seconds)
 
 
+def _game_step(anomalies, transports, enemies, wantedList, bounties, consts):
+    дывын = []
+    for trans in transports:
+        carpet = TransportCommand(transport_id=trans.id)
+
+        хуй = int(math.sqrt(consts.max_accel))
+        carpet.acceleration = {
+            'x': randint(-хуй, хуй),
+            'y': randint(-хуй, хуй),
+        }
+
+        дывын.append(carpet.to_json())
+
+    return дывын
+
+
 def main_cycle():
     result_transports = []
     is_test = True
@@ -50,11 +69,12 @@ def main_cycle():
         bounties = game_data['bounties']
         consts = game_data['consts']
 
+        result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts)
+        print(result_transports)
+
         end_time = time.time()
         elapsed_time = end_time - start_time
         remaining_sleep_time = 0.32 - elapsed_time
-
-        print(start_time, end_time, elapsed_time, remaining_sleep_time)
 
         if remaining_sleep_time > 0:
             print(f"Sleep for: {remaining_sleep_time}")

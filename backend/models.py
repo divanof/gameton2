@@ -78,3 +78,34 @@ class Constants:
                 f"attack_explosion_radius={self.attack_explosion_radius}, revive_timeout_sec={self.revive_timeout_sec}, "
                 f"shield_time_ms={self.shield_time_ms}, shield_cooldown_ms={self.shield_cooldown_ms}, "
                 f"transport_radius={self.transport_radius}, map_x={self.map_x}, map_y={self.map_y})")
+
+
+class TransportCommand:
+    def __init__(self, transport_id, acceleration=None, activate_shield=False, attack=None):
+        """
+        transport_id: str - ID ковра-самолета
+        acceleration: dict - словарь с ускорением {'x': value, 'y': value}
+        activate_shield: bool - флаг активации щита
+        attack: dict - координаты атаки {'x': value, 'y': value} (может быть None)
+        """
+        self.id = transport_id
+        self.acceleration = acceleration or {"x": 0, "y": 0}
+        self.activate_shield = activate_shield
+        self.attack = attack
+
+    def to_json(self):
+        """
+        Преобразует объект в JSON-формат, готовый для отправки в API.
+        """
+        data = {
+            "id": self.id,
+            "acceleration": self.acceleration,
+            "activateShield": self.activate_shield
+        }
+        if self.attack:
+            data["attack"] = self.attack
+        return data
+
+    def __repr__(self):
+        return (f"TransportCommand(id={self.id}, acceleration={self.acceleration}, "
+                f"activate_shield={self.activate_shield}, attack={self.attack})")
