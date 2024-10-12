@@ -86,20 +86,20 @@ def main_cycle():
         consts = game_data['consts']
 
         if not target:
-            # target = [
-            #     [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
-            #     [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
-            #     [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
-            #     [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
-            #     [int(consts.map_x * 0.5)  - randint(-500, 500), int(consts.map_y * 0.5) - randint(-500, 500)]
-            # ]
             target = [
-                [int(consts.map_x * 0.2)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],
-                [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],
-                [int(consts.map_x * 0.2)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)],
-                [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)],
-                [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)]
+                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
+                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
+                [int(consts.map_x * 0.5)  - randint(-500, 500), int(consts.map_y * 0.5) - randint(-500, 500)]
             ]
+            # target = [
+            #     [int(consts.map_x * 0.2)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.2)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.8) - randint(-500, 500)]
+            # ]
 
         result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts, target)
 
