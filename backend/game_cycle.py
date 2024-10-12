@@ -87,10 +87,10 @@ def main_cycle():
 
         if not target:
             target = [
-                [int(consts.map_x * 0.4)  - randint(-500, 500), int(consts.map_y * 0.4) - randint(-500, 500)],
-                [int(consts.map_x * 0.6)  - randint(-500, 500), int(consts.map_y * 0.4) - randint(-500, 500)],
-                [int(consts.map_x * 0.4)  - randint(-500, 500), int(consts.map_y * 0.6) - randint(-500, 500)],
-                [int(consts.map_x * 0.6)  - randint(-500, 500), int(consts.map_y * 0.6) - randint(-500, 500)],
+                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
+                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
                 [int(consts.map_x * 0.5)  - randint(-500, 500), int(consts.map_y * 0.5) - randint(-500, 500)]
             ]
 
