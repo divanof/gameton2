@@ -10,6 +10,7 @@ import uvicorn
 from pydantic import BaseModel
 
 from game_cycle import main_cycle
+from utils import get_latest_log_file
 
 load_dotenv()
 app = FastAPI()
@@ -64,10 +65,13 @@ async def get_map():
     """
     Получение карты для отрисовки
     """
-    units = json_read("logs/units.json")
-    world = json_read("logs/world.json")
+    latest_log_file = get_latest_log_file()
+    if latest_log_file:
+        game_map = json_read(latest_log_file)
+    else:
+        game_map = {}
 
-    return {"units": units, "world": world}
+    return game_map
 
 
 # @app.post("/action/")
