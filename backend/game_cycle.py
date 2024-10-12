@@ -87,11 +87,11 @@ def main_cycle():
 
         if not target:
             target = [
-                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
-                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
-                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
-                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)],
-                [consts.map_x - 500 - randint(100, 500), consts.map_y - 500 - randint(100, 500)]
+                [consts.map_x // 2  - randint(-500, 500), consts.map_y // 2 - randint(-500, 500)],
+                [consts.map_x // 2  - randint(-500, 500), consts.map_y // 2 - randint(-500, 500)],
+                [consts.map_x // 2  - randint(-500, 500), consts.map_y // 2 - randint(-500, 500)],
+                [consts.map_x // 2  - randint(-500, 500), consts.map_y // 2 - randint(-500, 500)],
+                [consts.map_x // 2  - randint(-500, 500), consts.map_y // 2 - randint(-500, 500)]
             ]
 
         result_transports = _game_step(anomalies, transports, enemies, wantedList, bounties, consts, target)
