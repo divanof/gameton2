@@ -107,7 +107,7 @@ from utils import sign
 #     return {"x": dx * scale, "y": dy * scale}
 
 
-def compute_acceleration(transport, anomalies, bounties, max_acc):
+def calculate_acc_vector(transport, anomalies, bounties, max_acc):
     # Helper function to compute Euclidean distance
     def distance(x1, y1, x2, y2):
         return math.hypot(x2 - x1, y2 - y1)
