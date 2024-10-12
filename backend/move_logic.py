@@ -107,75 +107,63 @@ from utils import sign
 #     return {"x": dx * scale, "y": dy * scale}
 
 
-def calculate_acc_vector(transport, anomalies, enemies, bounties, max_acc):
-  
-    # Constants for force calculations
-    BOUNTY_ATTRACTION_STRENGTH = 1.0  
-    ENEMY_REPULSION_STRENGTH = 100.0 
+def compute_acceleration(transport, anomalies, bounties, max_acc):
+    # Helper function to compute Euclidean distance
+    def distance(x1, y1, x2, y2):
+        return math.hypot(x2 - x1, y2 - y1)
+    
 
-    tx, ty = transport.x, transport.y
+    def normalize(vec):
+        mag = math.hypot(vec[0], vec[1])
+        if mag == 0:
+            return (0, 0)
+        return (vec[0] / mag, vec[1] / mag)
+    
 
-    # Find the nearest bounty
-    min_dist = float('inf')
+    def limit(vec, max_mag):
+        mag = math.hypot(vec[0], vec[1])
+        if mag > max_mag:
+            ratio = max_mag / mag
+            return (vec[0] * ratio, vec[1] * ratio)
+        return vec
+    
+
+    min_distance = float('inf')
     nearest_bounty = None
     for bounty in bounties:
-        dist = math.hypot(bounty.x - tx, bounty.y - ty)
-        if dist < min_dist:
-            min_dist = dist
+        d = distance(transport.x, transport.y, bounty.x, bounty.y)
+        if d < min_distance:
+            min_distance = d
             nearest_bounty = bounty
+    
+    if nearest_bounty is None:
+        # No bounties available
+        return (0, 0)
+    
+    # Step 2: Compute the desired acceleration towards the bounty
+    delta_pos = (nearest_bounty.x - transport.x, nearest_bounty.y - transport.y)
+    a_bounty = delta_pos  # Proportional to the distance vector
+    
 
-    # Compute the attractive force towards the nearest bounty
-    if nearest_bounty:
-        dx = nearest_bounty.x - tx
-        dy = nearest_bounty.y - ty
-        dist = math.hypot(dx, dy)
-        if dist != 0:
-            nx = dx / dist
-            ny = dy / dist
-            # Attraction force towards the bounty
-            force_bounty_x = nx * BOUNTY_ATTRACTION_STRENGTH
-            force_bounty_y = ny * BOUNTY_ATTRACTION_STRENGTH
-        else:
-            force_bounty_x = 0
-            force_bounty_y = 0
-    else:
-        force_bounty_x = 0
-        force_bounty_y = 0
-
-    # Initialize total force with the bounty attraction force
-    total_force_x = force_bounty_x
-    total_force_y = force_bounty_y
-
-    # Compute forces from anomalies
+    a_anomalies = (0, 0)
     for anomaly in anomalies:
-        dx = anomaly.x - tx
-        dy = anomaly.y - ty
-        dist = math.hypot(dx, dy)
-        if dist < anomaly.radius and dist != 0:
-            nx = dx / dist
-            ny = dy / dist
-            force_magnitude = anomaly.strength * (anomaly.radius - dist) / anomaly.radius
-            total_force_x += nx * force_magnitude
-            total_force_y += ny * force_magnitude
-
-    for enemy in enemies:
-        dx = enemy.x - tx
-        dy = enemy.y - ty
-        dist = math.hypot(dx, dy)
-        if dist != 0:
-            nx = dx / dist
-            ny = dy / dist
-            force_magnitude = ENEMY_REPULSION_STRENGTH / dist**2
-            total_force_x -= nx * force_magnitude
-            total_force_y -= ny * force_magnitude
-
-    acc_magnitude = math.hypot(total_force_x, total_force_y)
-    if acc_magnitude > max_acc:
-        scaling_factor = max_acc / acc_magnitude
-        total_force_x *= scaling_factor
-        total_force_y *= scaling_factor
-
-    return {"x": total_force_x, "y": total_force_y}
+        d = distance(transport.x, transport.y, anomaly.x, anomaly.y)
+        if d <= anomaly.radius:
+            # Compute unit vector from transport to anomaly
+            direction = (anomaly.x - transport.x, anomaly.y - transport.y)
+            u = normalize(direction)
+            # Acceleration due to anomaly
+            a_anomaly = (anomaly.strength * u[0], anomaly.strength * u[1])
+            # Sum up the anomaly accelerations
+            a_anomalies = (a_anomalies[0] + a_anomaly[0], a_anomalies[1] + a_anomaly[1])
+    
+    
+    a_total = (a_bounty[0] + a_anomalies[0], a_bounty[1] + a_anomalies[1])
+    
+    # Step 5: Limit the total acceleration to max_acc
+    a_total_limited = limit(a_total, max_acc)
+    
+    return {'x': a_total_limited.x, 'y': a_total_limited.y}
 
 
 def уебать(trans, enemies):

@@ -44,7 +44,7 @@ def _game_step(anomalies, transports, enemies, wantedList, bounties, consts, tar
         #     target[i][0], target[i][1] = get_nearest_treasure(trans, bounties)
 
         # acceleration = calculate_acc_vector(trans, target[i][0], target[i][1], anomalies, consts)
-        acceleration = calculate_acc_vector(trans, anomalies, enemies, bounties, consts.max_accel)
+        acceleration = calculate_acc_vector(trans, anomalies, bounties, consts.max_accel)
         attack = уебать(trans, enemies)
 
         carpet = TransportCommand(
