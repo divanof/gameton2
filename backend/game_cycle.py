@@ -39,15 +39,12 @@ def _sleep_time_till_next_hour():
 def _game_step(anomalies, transports, enemies, wantedList, bounties, consts, target):
     дывын = []
 
-    i = 0
-    for trans in transports:
+    for i, trans in enumerate(transports):
         if calculate_distance(trans.x, trans.y, target[i][0], target[i][1]) < 5:
-            target[i][0],target[i][1] = get_nearest_treasure(trans, bounties)
+            target[i][0], target[i][1] = get_nearest_treasure(trans, bounties)
 
         acceleration = calculate_acc_vector(trans, target[i][0], target[i][1], anomalies, consts)
         attack = уебать(trans, enemies)
-
-        i += 1
 
         carpet = TransportCommand(
             transport_id=trans.id,
@@ -87,12 +84,19 @@ def main_cycle():
 
         if not target:
             target = [
-                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
-                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
-                [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
-                [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
-                [int(consts.map_x * 0.5)  - randint(-500, 500), int(consts.map_y * 0.5) - randint(-500, 500)]
+                get_nearest_treasure(transports[0], bounties),
+                get_nearest_treasure(transports[1], bounties),
+                get_nearest_treasure(transports[2], bounties),
+                get_nearest_treasure(transports[3], bounties),
+                get_nearest_treasure(transports[4], bounties)
             ]
+            # target = [
+            #     [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.45) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.45)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.55)  - randint(-500, 500), int(consts.map_y * 0.55) - randint(-500, 500)],
+            #     [int(consts.map_x * 0.5)  - randint(-500, 500), int(consts.map_y * 0.5) - randint(-500, 500)]
+            # ]
             # target = [
             #     [int(consts.map_x * 0.2)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],
             #     [int(consts.map_x * 0.8)  - randint(-500, 500), int(consts.map_y * 0.2) - randint(-500, 500)],

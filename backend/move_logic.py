@@ -2,37 +2,93 @@ import math
 from utils import sign
 
 
-def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
-    """
-    Рассчитывает вектор движения от текущей позиции до целевой позиции.
-    Возвращает нормализованный вектор, учитывая максимальное ускорение.
-    """
-    px = 0  # power x
-    py = 0  # power y
-    for anom in anomalies:
-        d = math.hypot((anom.x - trans.x), (anom.y - trans.y))
-        if d >= anom.radius:
-            continue
+# def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
+#     """
+#     Рассчитывает вектор движения от текущей позиции до целевой позиции.
+#     Возвращает нормализованный вектор, учитывая максимальное ускорение.
+#     """
+#     px = 0  # power x
+#     py = 0  # power y
+#     for anom in anomalies:
+#         d = math.hypot((anom.x - trans.x), (anom.y - trans.y))
+#         if d >= anom.radius:
+#             continue
         
-        a = sign(anom.strength) * anom.strength**2 / d**2
-        px += a * (trans.x - anom.x) / d
-        py += a * (trans.y - anom.y) / d
+#         a = sign(anom.strength) * anom.strength**2 / d**2
+#         px += a * (trans.x - anom.x) / d
+#         py += a * (trans.y - anom.y) / d
     
+#     dx = target_x - trans.x
+#     dy = target_y - trans.y
+
+#     px += dx
+#     py += dy
+
+#     tp = math.hypot(px, py)  # total power
+#     if tp == 0:
+#         return {"x": 0, "y": 0}
+
+#     if tp > consts.max_accel:
+#         px = px * consts.max_accel / tp
+#         py = py * consts.max_accel / tp
+
+#     return {"x": px, "y": py}
+
+def calculate_acc_vector(trans, target_x, target_y, anomalies, consts):
+    # Вектор к цели
     dx = target_x - trans.x
     dy = target_y - trans.y
+    distance_to_target = math.hypot(dx, dy)
 
-    px += dx
-    py += dy
-
-    tp = math.hypot(px, py)  # total power
-    if tp == 0:
+    # Если мы уже на цели, ускорения нет
+    if distance_to_target == 0:
         return {"x": 0, "y": 0}
 
-    if tp > consts.max_accel:
-        px = px * consts.max_accel / tp
-        py = py * consts.max_accel / tp
+    # Инициализируем ускорение к цели
+    scale = min(consts.max_accel / distance_to_target, 1)
+    acc_x = dx * scale
+    acc_y = dy * scale
 
-    return {"x": px, "y": py}
+    # Проверяем, не находимся ли мы критически близко к аномалии
+    for anomaly in anomalies:
+        dx_anomaly = anomaly.x - trans.x
+        dy_anomaly = anomaly.y - trans.y
+        distance_to_anomaly = math.hypot(dx_anomaly, dy_anomaly)
+
+        # Определяем критическую дистанцию (например, чуть больше радиуса аномалии)
+        critical_distance = anomaly.radius * 0.3  # Можно настроить коэффициент
+
+        if distance_to_anomaly <= critical_distance:
+            # Вычисляем вектор ускорения, чтобы вылететь из зоны аномалии
+            dx_away = trans.x - anomaly.x
+            dy_away = trans.y - anomaly.y
+            distance_away = math.hypot(dx_away, dy_away)
+
+            # Нормализуем вектор отталкивания
+            if distance_away != 0:
+                dx_away /= distance_away
+                dy_away /= distance_away
+
+                # Ускорение максимально возможное в направлении от аномалии
+                acc_x = dx_away * consts.max_accel
+                acc_y = dy_away * consts.max_accel
+            else:
+                # Если мы точно в центре аномалии (теоретически), выбираем случайное направление
+                acc_x = consts.max_accel
+                acc_y = 0
+
+            # После того как мы установили ускорение для выхода из аномалии, можем прервать цикл
+            break
+
+    # Проверяем, чтобы итоговый вектор ускорения не превышал максимальное значение
+    total_acceleration = math.hypot(acc_x, acc_y)
+    if total_acceleration > consts.max_accel:
+        scale = consts.max_accel / total_acceleration
+        acc_x *= scale
+        acc_y *= scale
+
+    return {"x": acc_x, "y": acc_y}
+
 
 
 def уебать(trans, enemies):
