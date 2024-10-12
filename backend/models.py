@@ -12,13 +12,14 @@ class Anomaly:
 
 
 class Transport:
-    def __init__(self, transport_id, x, y, velocity, health, status):
+    def __init__(self, transport_id, x, y, velocity, health, status, attack_cooldown_ms):
         self.id = transport_id
         self.x = x
         self.y = y
         self.velocity = velocity
         self.health = health
         self.status = status
+        self.attack_cooldown_ms = attack_cooldown_ms
 
     def __repr__(self):
         return f"Transport(id={self.id}, x={self.x}, y={self.y}, velocity={self.velocity}, health={self.health}, status={self.status})"

@@ -31,7 +31,8 @@ def extract_transports(data):
             transport.get('y'), 
             transport.get('velocity'),
             transport.get('health'),
-            transport.get('status')
+            transport.get('status'),
+            transport.get('attackCooldownMs')
         )
         for transport in transports_data
     ]
